@@ -18,10 +18,7 @@ void TrieNode::insert(const std::wstring &key)
 
 std::vector<std::wstring> TrieNode::extract_words(const std::wstring &prefix)
 {
-    struct QueueEntry {
-        TrieNode *   node = nullptr;
-        std::wstring word;
-    };
+    using QueueEntry = std::pair<TrieNode *, std::wstring>;
 
     std::stack<QueueEntry>    traversal;
     std::vector<std::wstring> words;
@@ -30,16 +27,16 @@ std::vector<std::wstring> TrieNode::extract_words(const std::wstring &prefix)
 
     while (!traversal.empty())
     {
-        auto [current_node, word] = traversal.top();
+        auto [current_node, word] = std::move(traversal.top());
         traversal.pop();
 
         for (auto &[key, val] : current_node->children)
         {
             QueueEntry child{&val, word};
-            child.word.push_back(key);
+            child.second.push_back(key);
 
             if (val.is_word_end)
-                words.push_back(child.word);
+                words.push_back(child.second);
 
             if (!val.children.empty())
                 traversal.push(std::move(child));
