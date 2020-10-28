@@ -1,7 +1,6 @@
 #include "trie.hpp"
 
-#include <iterator>
-#include <queue>
+#include <stack>
 #include <string>
 #include <utility>
 #include <vector>
@@ -19,19 +18,22 @@ void TrieNode::insert(const std::wstring &key)
 
 std::vector<std::wstring> TrieNode::extract_words(const std::wstring &prefix)
 {
-    std::vector<std::wstring> words{prefix};
-    std::queue<TrieNode *>    traversal;
-    std::queue<std::pair<wchar_t, bool>>
-         char_queue; // bool to check whether char is the of the word
-    bool new_word_required = false;
+    struct QueueEntry {
+        TrieNode *   node = nullptr;
+        std::wstring word;
+    };
 
-    traversal.push(this);
+    std::stack<QueueEntry>    traversal;
+    std::vector<std::wstring> words;
+
+    traversal.push({this});
 
     while (!traversal.empty())
     {
-        TrieNode *current_node = traversal.front();
+        auto [current_node, word] = traversal.top();
         traversal.pop();
 
+        /*
         if (!char_queue.empty())
         {
             auto [c, is_word_end] = char_queue.front();
@@ -44,11 +46,17 @@ std::vector<std::wstring> TrieNode::extract_words(const std::wstring &prefix)
 
             new_word_required = is_word_end;
         }
+        */
 
         for (auto &[key, val] : current_node->children)
         {
-            char_queue.push({key, val.is_word_end});
-            traversal.push(&val);
+            QueueEntry child{&val, word};
+            child.word.push_back(key);
+
+            if (val.is_word_end)
+                words.push_back(child.word);
+
+            traversal.push(std::move(child));
         }
     }
 
