@@ -26,27 +26,12 @@ std::vector<std::wstring> TrieNode::extract_words(const std::wstring &prefix)
     std::stack<QueueEntry>    traversal;
     std::vector<std::wstring> words;
 
-    traversal.push({this});
+    traversal.push({this, prefix});
 
     while (!traversal.empty())
     {
         auto [current_node, word] = traversal.top();
         traversal.pop();
-
-        /*
-        if (!char_queue.empty())
-        {
-            auto [c, is_word_end] = char_queue.front();
-            char_queue.pop();
-
-            if (new_word_required)
-                words.push_back(prefix);
-
-            words.back().push_back(c);
-
-            new_word_required = is_word_end;
-        }
-        */
 
         for (auto &[key, val] : current_node->children)
         {
@@ -56,7 +41,8 @@ std::vector<std::wstring> TrieNode::extract_words(const std::wstring &prefix)
             if (val.is_word_end)
                 words.push_back(child.word);
 
-            traversal.push(std::move(child));
+            if (!val.children.empty())
+                traversal.push(std::move(child));
         }
     }
 
@@ -79,7 +65,7 @@ std::vector<std::wstring> TrieNode::search_by_prefix(const std::wstring &prefix)
     }
 
     if (!current_node->children.empty())
-        return current_node->extract_words();
+        return current_node->extract_words(prefix);
     // Found nothing but the prefix itself
     else if (current_node->is_word_end)
         return {prefix};
