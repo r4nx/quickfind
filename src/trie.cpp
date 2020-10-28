@@ -30,9 +30,14 @@ std::vector<std::wstring> TrieNode::extract_words(const std::wstring &prefix)
         auto [current_node, word] = std::move(traversal.top());
         traversal.pop();
 
+        bool has_only_child = current_node->children.size() == 1;
+
         for (auto &[key, child_node] : current_node->children)
         {
-            QueueEntry entry{&child_node, word};
+            QueueEntry entry{
+                &child_node,
+                has_only_child ? std::move(word) : word};
+
             entry.second.push_back(key);
 
             if (child_node.is_word_end)
