@@ -5,11 +5,11 @@
 #include <utility>
 #include <vector>
 
-void TrieNode::insert(const std::wstring &key)
+void TrieNode::insert(const std::wstring &word)
 {
     TrieNode *current_node = this;
 
-    for (const auto c : key)
+    for (const auto c : word)
         current_node =
             &current_node->children.try_emplace(c, TrieNode{}).first->second;
 
@@ -30,16 +30,16 @@ std::vector<std::wstring> TrieNode::extract_words(const std::wstring &prefix)
         auto [current_node, word] = std::move(traversal.top());
         traversal.pop();
 
-        for (auto &[key, val] : current_node->children)
+        for (auto &[key, child_node] : current_node->children)
         {
-            QueueEntry child{&val, word};
-            child.second.push_back(key);
+            QueueEntry entry{&child_node, word};
+            entry.second.push_back(key);
 
-            if (val.is_word_end)
-                words.push_back(child.second);
+            if (child_node.is_word_end)
+                words.push_back(entry.second);
 
-            if (!val.children.empty())
-                traversal.push(std::move(child));
+            if (!child_node.children.empty())
+                traversal.push(std::move(entry));
         }
     }
 

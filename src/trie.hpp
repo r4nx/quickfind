@@ -7,8 +7,17 @@
 
 class TrieNode {
 public:
-    void                      insert(const std::wstring &key);
+    void insert(const std::wstring &word);
+
+    /*
+     * @brief Extracts all the words found in the tree and optionally prepends
+     * specified @p prefix to them.
+     */
     std::vector<std::wstring> extract_words(const std::wstring &prefix = L"");
+
+    /*
+     * @brief Found all the words, that start with the specified @p prefix.
+     */
     std::vector<std::wstring> search_by_prefix(const std::wstring &prefix);
 
 private:
