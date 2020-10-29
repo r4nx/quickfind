@@ -18,9 +18,9 @@ void TrieNode::insert(const std::wstring &word)
 
 std::vector<std::wstring> TrieNode::extract_words(const std::wstring &prefix)
 {
-    using QueueEntry = std::pair<TrieNode *, std::wstring>;
+    using StackEntry = std::pair<TrieNode *, std::wstring>;
 
-    std::stack<QueueEntry>    traversal;
+    std::stack<StackEntry>    traversal;
     std::vector<std::wstring> words;
 
     traversal.push({this, prefix});
@@ -34,7 +34,7 @@ std::vector<std::wstring> TrieNode::extract_words(const std::wstring &prefix)
 
         for (auto &[key, child_node] : current_node->children)
         {
-            QueueEntry entry{
+            StackEntry entry{
                 &child_node,
                 has_only_child ? std::move(word) : word};
 
