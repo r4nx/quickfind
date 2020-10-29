@@ -1,13 +1,11 @@
 #include "directory_index.hpp"
 
 #include <filesystem>
-#include <queue>
-#include <stdexcept>
 #include <utility>
 
 namespace fs = std::filesystem;
 
-DirectoryIndex::DirectoryIndex(const fs::path &path_) : path{path_}
+DirectoryIndex::DirectoryIndex(fs::path path_) : path{std::move(path_)}
 {
     for (auto &dir_item : fs::directory_iterator(path))
     {

@@ -8,7 +8,7 @@
 
 class DirectoryIndex {
 public:
-    DirectoryIndex(const std::filesystem::path &path_);
+    DirectoryIndex(std::filesystem::path path_);
 
 // private:
     std::filesystem::path       path;
