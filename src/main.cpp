@@ -40,8 +40,9 @@ int main()
         while (true) {
             std::wstring query;
 
-            std::cout << "Query >";
-            std::wcin >> query;
+            std::cout << "\n  Query (use Ctrl+Z to quit) >";
+            if (!(std::wcin >> query))
+                break;
 
             for (const auto &suggestion : index.get_suggestions(query))
                 std::wcout << suggestion << std::endl;
