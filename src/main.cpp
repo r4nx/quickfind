@@ -1,15 +1,49 @@
+#include "directory_index.hpp"
 #include "trie.hpp"
 
+#include <clocale>
+#include <cstdlib>
+#include <filesystem>
+#include <iostream>
+#include <stdexcept>
 #include <string>
+
+namespace fs = std::filesystem;
 
 int main()
 {
-    TrieNode trie_node;
+    std::setlocale(LC_ALL, "");
 
-    trie_node.insert(L"they");
-    trie_node.insert(L"type");
+    std::wstring folder_to_index;
+    std::cout << "Path to the folder to index >";
+    std::wcin >> folder_to_index;
 
-    auto words = trie_node.extract_words();
+    try
+    {
+        fs::path index_path(folder_to_index);
 
-    return 0;
+        if (!fs::exists(index_path))
+        {
+            std::cerr << "Cannot find the specified directory ;(" << std::endl;
+            return EXIT_FAILURE;
+        }
+        else if (!fs::is_directory(index_path))
+        {
+            std::cerr << "Specified path doesn't appear to be a directory."
+                      << std::endl;
+            return EXIT_FAILURE;
+        }
+
+        std::cout << "Indexing, please wait.." << std::endl;
+        DirectoryIndex index{index_path};
+
+        for (const auto &dir_item : index.dir_items.extract_words())
+            std::wcout << dir_item << std::endl;
+    }
+    catch (const std::runtime_error &ex)
+    {
+        std::cerr << "== Oops, runtime error ==\n" << ex.what() << std::endl;
+    }
+
+    return EXIT_SUCCESS;
 }

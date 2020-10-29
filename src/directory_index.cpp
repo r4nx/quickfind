@@ -1,5 +1,4 @@
 #include "directory_index.hpp"
-#include "utils.hpp"
 
 #include <filesystem>
 #include <queue>
