@@ -37,8 +37,15 @@ int main()
         std::cout << "Indexing, please wait.." << std::endl;
         DirectoryIndex index{index_path};
 
-        for (const auto &dir_item : index.dir_items.extract_words())
-            std::wcout << dir_item << std::endl;
+        while (true) {
+            std::wstring query;
+
+            std::cout << "Query >";
+            std::wcin >> query;
+
+            for (const auto &suggestion : index.get_suggestions(query))
+                std::wcout << suggestion << std::endl;
+        }
     }
     catch (const std::runtime_error &ex)
     {
